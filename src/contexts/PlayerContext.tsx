@@ -1,6 +1,6 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useState } from 'react';
 
-interface Player {
+export interface Player {
   id: string;
   name: string;
   skill: number;
@@ -16,13 +16,13 @@ interface PlayerContextType {
 const PlayerContext = createContext<PlayerContextType>({
   players: [],
   addPlayer: () => {
-    console.log("");
+    console.log('');
   },
   updatePlayer: () => {
-    console.log("");
+    console.log('');
   },
   deletePlayer: () => {
-    console.log("");
+    console.log('');
   },
 });
 

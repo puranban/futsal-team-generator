@@ -1,13 +1,13 @@
-import { PlayerProvider } from "#contexts/PlayerContext";
-import PlayerForm from "#views/PlayerForm";
-import { Layout } from "antd";
+import { PlayerProvider } from '#contexts/PlayerContext';
+import PlayerForm from '#views/PlayerForm';
+import { Layout } from 'antd';
 
-import "./App.css";
+import './App.css';
 
 function App() {
   return (
     <PlayerProvider>
-      <Layout className="layout">
+      <Layout className='layout'>
       <PlayerForm />
       </Layout>
     </PlayerProvider>

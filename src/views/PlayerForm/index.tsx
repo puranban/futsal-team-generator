@@ -1,24 +1,35 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Flex, Form, Input, Rate, Space, Table, Typography } from 'antd';
+import {
+  Button,
+  Divider,
+  Flex,
+  Form,
+  Input,
+  Popconfirm,
+  Rate,
+  Space,
+  Table,
+  Typography,
+} from 'antd';
 
-import PlayerContext from '#contexts/PlayerContext';
+import PlayerContext, { Player } from '#contexts/PlayerContext';
+import EditModal from '#components/EditModal';
 
 const { Title } = Typography;
 
 interface Values {
-  users: {
-    name: string;
-    skill: number;
-  }[]
+  users: Player[];
 }
 const PlayerForm: React.FC = () => {
   const [form] = Form.useForm();
   const { players, addPlayer, updatePlayer, deletePlayer } = useContext(PlayerContext);
 
-  const onFinish = (values: Values) => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [playerId, setPlayerId] = useState<string>('');
 
+  const onFinish = (values: Values) => {
     const newUsers = values.users.map((user) => ({
       id: uuid(),
       name: user.name,
@@ -29,15 +40,14 @@ const PlayerForm: React.FC = () => {
       addPlayer(newUsers);
       form.resetFields();
     } catch(err) {
-      console.log("Error adding player", err);
+      console.log('Error adding player', err);
     }
   };
 
-
   const handlePlayerUpdate = useCallback(
-    (playerId: string) => {
-      console.log('update player', playerId);
-
+    (id: string) => {
+      setPlayerId(id);
+      setIsModalOpen(true);
     },
     [],
   );
@@ -52,39 +62,41 @@ const PlayerForm: React.FC = () => {
       title: 'Skill Level',
       dataIndex: 'skill',
       key: 'skill',
-      render: (skill: number) => <Rate disabled defaultValue={skill} />,
+      render: (skill: number) => <Rate character={({ index = 0 }) => index + 1} value={skill} />,
     },
     {
       title: 'Action',
       dataIndex: 'id',
       key: 'id',
       render: (id: string) => {
-        console.log('table action', id);
         return (
           <Space>
-            <Button type="link" onClick={() => handlePlayerUpdate(id)}>Edit</Button>
-            <Button type="link" danger onClick={() => deletePlayer(id)}>Delete</Button>
+            <Button type='link' onClick={() => handlePlayerUpdate(id)}>Edit</Button>
+            <Popconfirm title='Sure to delete?' onConfirm={() => deletePlayer(id)}>
+              <Button type='link' danger>Delete</Button>
+            </Popconfirm>
           </Space>
         );
       },
     },
   ];
+
   return (
-    <Flex vertical flex="1">
+    <Flex vertical flex='1'>
       <Form
         form={form}
-        name="dynamic_form_nest_item"
+        name='dynamic_form_nest_item'
         onFinish={onFinish}
         style={{ maxWidth: 600 }}
-        autoComplete="off"
+        autoComplete='off'
         initialValues={{ users: [{}] }}
       >
-        <Form.List name="users">
+        <Form.List name='users'>
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name, ...restField }) => {
                 return (
-                  <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                  <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align='baseline'>
                     <CloseOutlined onClick={() => remove(name)} />
 
                     <Form.Item
@@ -99,16 +111,14 @@ const PlayerForm: React.FC = () => {
                       name={[name, 'skill']}
                       rules={[{ required: true, message: 'Missing Score' }]}
                     >
-                      <Rate
-                        character={({ index = 0 }) => index + 1}
-                      />
+                      <Rate character={({ index = 0 }) => index + 1} />
                     </Form.Item>
                   </Space>
                 )
               })}
 
               <Form.Item>
-                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                <Button type='dashed' onClick={() => add()} block icon={<PlusOutlined />}>
                   Add Player
                 </Button>
               </Form.Item>
@@ -116,17 +126,27 @@ const PlayerForm: React.FC = () => {
           )}
         </Form.List>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button type='primary' htmlType="submit">
             Submit
           </Button>
         </Form.Item>
       </Form>
 
       <Divider />
-      <Space direction="vertical" size="small">
+      <Space direction='vertical' size="small">
         <Title level={3}> Player List </Title>
-        <Table dataSource={players} columns={columns} rowKey="id" />
+        <Table dataSource={players} columns={columns} rowKey='id' />
       </Space>
+
+      {isModalOpen && (
+        <EditModal
+          playerId={playerId}
+          players={players}
+          open={isModalOpen}
+          setOpen={setIsModalOpen}
+          onUpdatePlayer={updatePlayer}
+        />
+      )}
     </Flex>
   );
 }

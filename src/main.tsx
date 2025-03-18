@@ -13,7 +13,9 @@ root.render(
       theme={{
         components: {
           Rate: {
-            starColor: "#ee0000",
+            starColor: '#ee0000',
+            starBg: 'rgba(18, 8, 8, 0.26)',
+            starHoverScale: 'scale(1.5)',
           }
         }
       }}
