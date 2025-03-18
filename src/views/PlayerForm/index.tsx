@@ -1,5 +1,4 @@
-import { useCallback, useContext, useState } from 'react';
-import { v4 as uuid } from 'uuid';
+import { useCallback, useState } from 'react';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -14,34 +13,37 @@ import {
   Typography,
 } from 'antd';
 
-import PlayerContext, { Player } from '#contexts/PlayerContext';
 import EditPlayerModal from '#components/EditPlayerModal';
+import { Player } from '../../db';
+import { usePlayers } from '#hooks/usePlayers';
 
 const { Title } = Typography;
 
 interface Values {
-  users: Player[];
+  users: Omit<Player, 'id'>[];
 }
 const PlayerForm: React.FC = () => {
   const [form] = Form.useForm();
-  const { players, addPlayer, updatePlayer, deletePlayer } = useContext(PlayerContext);
+  const {
+    players,
+    addPlayer,
+    updatePlayer,
+    deletePlayer,
+  } = usePlayers();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [playerId, setPlayerId] = useState<string>('');
 
   const onFinish = (values: Values) => {
-    const newUsers = values.users.map((user) => ({
-      id: uuid(),
-      name: user.name,
-      skill: user.skill,
-    }));
+    const newUsers = values.users.map(
+      (user) => ({
+        name: user.name,
+        skill: user.skill,
+      }),
+    );
 
-    try {
-      addPlayer(newUsers);
-      form.resetFields();
-    } catch(err) {
-      console.log('Error adding player', err);
-    }
+    void addPlayer(newUsers);
+    form.resetFields();
   };
 
   const handlePlayerUpdate = useCallback(
@@ -51,6 +53,14 @@ const PlayerForm: React.FC = () => {
     },
     [],
   );
+
+  const handleUpdatePlayer = async (player: Player) => {
+    try {
+      await updatePlayer(player);
+    } catch (error) {
+      console.error('Failed to update player:', error);
+    }
+  };
 
   const columns = [
     {
@@ -71,7 +81,7 @@ const PlayerForm: React.FC = () => {
       render: (id: string) => (
         <Space>
           <Button type='link' onClick={() => handlePlayerUpdate(id)}>Edit</Button>
-          <Popconfirm title='Sure you want to delete?' onConfirm={() => deletePlayer(id)}>
+          <Popconfirm title='Sure you want to delete?' onConfirm={() => void deletePlayer(id)}>
             <Button type='link' danger>Delete</Button>
           </Popconfirm>
         </Space>
@@ -146,7 +156,7 @@ const PlayerForm: React.FC = () => {
           players={players}
           open={isModalOpen}
           setOpen={setIsModalOpen}
-          onUpdatePlayer={updatePlayer}
+          onUpdatePlayer={handleUpdatePlayer}
         />
       )}
     </Flex>

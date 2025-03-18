@@ -1,11 +1,19 @@
-import { useCallback, useContext, useState } from 'react';
-import { Button, Col, Flex, Input, Row, Typography } from 'antd';
+import { useCallback, useState } from 'react';
+import {
+  Button,
+  Col,
+  Flex,
+  Input,
+  Row,
+  Typography,
+} from 'antd';
 
-import PlayerContext, { Player } from '#contexts/PlayerContext';
-import TeamContext from '#contexts/TeamContext';
+import { usePlayers } from '#hooks/usePlayers';
+import { useTeams } from '#hooks/useTeams';
+import { Player } from '../../db';
 
 interface TeamGeneratedType {
-  id: string;
+  id?: string;
   name: string;
   players: Player[];
   totalSkill: number;
@@ -14,8 +22,8 @@ interface TeamGeneratedType {
 const { Title } = Typography;
 
 const TeamGenerator: React.FC = () => {
-  const { players } = useContext(PlayerContext);
-  const { teams } = useContext(TeamContext);
+  const { players } = usePlayers();
+  const { teams } = useTeams();
   const [generatedTeams, setGeneratedTeams] = useState<TeamGeneratedType[]>([]);
 
   const generateTeams = useCallback(

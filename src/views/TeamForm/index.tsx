@@ -1,10 +1,19 @@
-import { useCallback, useContext, useState } from 'react';
-import { v4 as uuid } from 'uuid';
+import { useCallback, useState } from 'react';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Table, Space, Typography, Popconfirm, Flex } from 'antd';
+import {
+  Button,
+  Form,
+  Input,
+  Table,
+  Space,
+  Typography,
+  Popconfirm,
+  Flex,
+} from 'antd';
 
-import TeamContext, { Team } from '#contexts/TeamContext';
 import EditTeamModal from '#components/EditTeamModal';
+import { useTeams } from '#hooks/useTeams';
+import { Team } from '../../db';
 
 const { Title } = Typography;
 interface Values {
@@ -13,23 +22,25 @@ interface Values {
 
 const TeamForm: React.FC = () => {
   const [form] = Form.useForm();
-  const { teams, addTeam, updateTeam, deleteTeam } = useContext(TeamContext);
+  const {
+    teams,
+    addTeam,
+    updateTeam,
+    deleteTeam,
+  } = useTeams();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [teamId, setTeamId] = useState<string>('');
 
   const onFinish = (values: Values) => {
-    const newTeamList = values.teams.map((user) => ({
-      id: uuid(),
-      name: user.name,
-    }));
+    const newTeamList = values.teams.map(
+      (user) => ({
+        name: user.name,
+      }),
+    );
 
-    try {
-      addTeam(newTeamList);
-      form.resetFields();
-    } catch(err) {
-      console.log('Error adding player', err);
-    }
+    void addTeam(newTeamList);
+    form.resetFields();
   };
 
   const handleTeamUpdate = useCallback(
@@ -39,6 +50,14 @@ const TeamForm: React.FC = () => {
     },
     [],
   );
+
+  const handleUpdateTeam = async (team: Team) => {
+    try {
+      await updateTeam(team);
+    } catch (error) {
+      console.error('Failed to update team:', error);
+    }
+  };
 
   const columns = [
     {
@@ -53,7 +72,7 @@ const TeamForm: React.FC = () => {
       render: (id: string) => (
         <Space>
           <Button type='link' onClick={() => handleTeamUpdate(id)}>Edit</Button>
-          <Popconfirm title='Sure you want to delete?' onConfirm={() => deleteTeam(id)}>
+          <Popconfirm title='Sure you want to delete?' onConfirm={() => void deleteTeam(id)}>
             <Button type='link' danger>Delete</Button>
           </Popconfirm>
         </Space>
@@ -118,7 +137,7 @@ const TeamForm: React.FC = () => {
           teams={teams}
           open={isModalOpen}
           setOpen={setIsModalOpen}
-          onUpdateTeam={updateTeam}
+          onUpdateTeam={handleUpdateTeam}
         />
       )}
     </Flex>

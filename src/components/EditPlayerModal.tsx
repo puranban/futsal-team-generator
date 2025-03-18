@@ -1,11 +1,20 @@
 import { useCallback, useMemo } from 'react';
-import { Button, Flex, Form, FormProps, Input, Modal, Rate, Space } from 'antd';
-import { Player } from '#contexts/PlayerContext';
+import {
+  Button,
+  Flex,
+  Form,
+  FormProps,
+  Input,
+  Modal,
+  Rate,
+  Space,
+} from 'antd';
+import { Player } from '../db';
 
 interface Props {
   playerId: string;
   players: Player[];
-  onUpdatePlayer: (player: Player) => void;
+  onUpdatePlayer: (player: Player) => Promise<void>;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -27,21 +36,20 @@ const EditPlayerModal: React.FC<Props> = (props: Props) => {
   );
 
   const handleCancel = () => {
-    console.log('Clicked cancel button');
     setOpen(false);
   };
 
   const onFinish = useCallback(
     (val: Player)=> {
-      console.log('Success:', val);
-      const newPlayer = {
+      const updatedPlayer = {
         id: playerId,
         name: val.name,
         skill: val.skill,
       }
-      onUpdatePlayer(newPlayer);
+      void onUpdatePlayer(updatedPlayer);
+      setOpen(false);
     },
-    [onUpdatePlayer, playerId],
+    [onUpdatePlayer, playerId, setOpen],
   );
 
   const onFinishFailed: FormProps<Player>['onFinishFailed'] = (errorInfo) => {
@@ -62,7 +70,11 @@ const EditPlayerModal: React.FC<Props> = (props: Props) => {
         autoComplete='off'
         initialValues={initialValue}
       >
-        <Space size='large' style={{ display: 'flex', marginBottom: 8 }} align='baseline'>
+        <Space
+          size='large'
+          align='baseline'
+          style={{ display: 'flex', marginBottom: 8 }}
+        >
           <Form.Item
             name='name'
             rules={[{ required: true, message: 'player name required !' }]}

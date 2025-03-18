@@ -1,11 +1,19 @@
 import { useCallback, useMemo } from 'react';
-import { Button, Flex, Form, FormProps, Input, Modal, Space } from 'antd';
-import { Team } from '#contexts/TeamContext';
+import {
+  Button,
+  Flex,
+  Form,
+  FormProps,
+  Input,
+  Modal,
+  Space,
+} from 'antd';
+import { Team } from '../db';
 
 interface Props {
   teamId: string;
   teams: Team[];
-  onUpdateTeam: (team: Team) => void;
+  onUpdateTeam: (team: Team) => Promise<void>;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -33,12 +41,11 @@ const EditTeamModal: React.FC<Props> = (props: Props) => {
 
   const onFinish = useCallback(
     (val: Team)=> {
-      console.log('Success:', val);
       const updatedTeam = {
         id: teamId,
         name: val.name,
       }
-      onUpdateTeam(updatedTeam);
+      void onUpdateTeam(updatedTeam);
       setOpen(false);
     },
     [onUpdateTeam, teamId, setOpen],
@@ -62,7 +69,11 @@ const EditTeamModal: React.FC<Props> = (props: Props) => {
         autoComplete='off'
         initialValues={initialValue}
       >
-        <Space size='large' style={{ display: 'flex', marginBottom: 8 }} align='baseline'>
+        <Space
+          size='large'
+          align='baseline'
+          style={{ display: 'flex', marginBottom: 8 }}
+        >
           <Form.Item
             name='name'
             rules={[{ required: true, message: 'team name required !' }]}

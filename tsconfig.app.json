@@ -13,7 +13,6 @@
       "#contexts/*": ["./src/contexts/*"],
       "#components/*": ["./src/components/*"],
       "#hooks/*": ["./src/hooks/*"],
-      "#assets/*": ["./src/assets/*"]
     },
 
     /* Bundler mode */
