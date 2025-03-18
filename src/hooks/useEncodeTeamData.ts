@@ -1,4 +1,4 @@
-import { Player } from "../db";
+import { Player } from "#commons/types";
 
 interface TeamGeneratedType {
   id?: string;

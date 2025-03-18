@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
 import {
+  Alert,
   Button,
+  Flex,
   Input,
   message,
   Space,
@@ -13,6 +15,7 @@ import { encodeTeamData } from '#hooks/useEncodeTeamData';
 import { TeamGeneratedType } from '#commons/types';
 import TeamPreview from '#components/TeamPreview';
 import { CopyOutlined } from '@ant-design/icons';
+import { useTeamValidation } from '#hooks/useTeamValidation';
 
 const { Text } = Typography;
 
@@ -22,6 +25,7 @@ const TeamGenerator: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [generatedTeams, setGeneratedTeams] = useState<TeamGeneratedType[]>([]);
   const [shareUrl, setShareUrl] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const generateShareableLink = useCallback(
     (teams: TeamGeneratedType[]) => {
@@ -34,11 +38,20 @@ const TeamGenerator: React.FC = () => {
     },
     [],
   );
+  const hasEnoughPlayer = useTeamValidation({
+    numberOfTeams: teams.length,
+    numberOfPlayers: players.length,
+  });
 
   const generateTeams = useCallback(
     (): TeamGeneratedType[] => {
       if (players.length === 0 || teams.length === 0) {
         console.warn('No players or teams available to generate teams.');
+        return [];
+      }
+
+      if (!hasEnoughPlayer) {
+        setError('Each Team must have at least 5 players. Please add player/remove team.');
         return [];
       }
 
@@ -77,7 +90,7 @@ const TeamGenerator: React.FC = () => {
       }
       return newGeneratedTeams;
     },
-    [players, teams, generateShareableLink],
+    [players, teams, generateShareableLink, hasEnoughPlayer],
   );
 
   const handleCopy = useCallback(
@@ -95,22 +108,29 @@ const TeamGenerator: React.FC = () => {
   );
 
   return (
-    <Space direction='vertical' size='large'>
-      {contextHolder}
-      {shareUrl && (
-        <Space align='center'>
-          <Text> Share link: </Text>
-          <Input
-            addonAfter={<CopyOutlined onClick={handleCopy} />}
-            value={shareUrl}
-          />
-        </Space>
-      )}
-      <Button type="primary" onClick={generateTeams}>
-        Generate Teams
-      </Button>
-      <TeamPreview teams={generatedTeams} />
-    </Space>
+    <Flex vertical gap={24}>
+      {error && <Alert message={error} type='error' /> }
+      <Space direction='vertical' size='large'>
+        {!error && (
+          <>
+            {contextHolder}
+            {shareUrl && (
+              <Space align='center'>
+                <Text> Share link: </Text>
+                <Input
+                  addonAfter={<CopyOutlined onClick={handleCopy} />}
+                  value={shareUrl}
+                />
+              </Space>
+            )}
+          </>
+        )}
+        <Button type="primary" onClick={generateTeams}>
+          Generate Teams
+        </Button>
+        {!error && <TeamPreview teams={generatedTeams} /> }
+      </Space>
+    </Flex>
   );
 };
 

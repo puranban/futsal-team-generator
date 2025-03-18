@@ -19,8 +19,8 @@ const TeamPreview: React.FC<Props> = (props: Props) => {
       {teams.map(
         (team) => (
           <Col key={team.id} xs={24} md={12} lg={10}>
-            <Flex key={team.id} vertical gap={24}>
-              <Title level={4}>{team.name}</Title>
+            <Flex key={team.id} vertical>
+              <Title level={4}> {`${team.name} (${team.players.length})`}</Title>
 
               <Flex vertical size="middle" gap={6}>
                 {team.players.map(
