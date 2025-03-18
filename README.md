@@ -1,4 +1,4 @@
-# Random Futsal Team Generator App
+# Futsal Team Generator
 
 ## Getting started
 Below are the steps to guide you through preparing your local environment for the project.
@@ -15,12 +15,12 @@ To begin, ensure you have network access. Then, you'll need the following:
 
 * Clone the repository using HTTPS, SSH, or Github CLI
 ```bash
-git@github.com:puranban/random-futsal-team-generator.git #SSH
+git@github.com:puranban/futsal-team-generator.git #SSH
 ```
 
 * Navigate to the project directory
 ```bash
-cd random-futsal-team-generator
+cd futsal-team-generator
 ```
 
 * Install dependencies

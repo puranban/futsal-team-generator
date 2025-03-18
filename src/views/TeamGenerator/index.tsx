@@ -51,7 +51,7 @@ const TeamGenerator: React.FC = () => {
       }
 
       if (!hasEnoughPlayer) {
-        setError('Each Team must have at least 5 players. Please add player/remove team.');
+        setError('Each Team must have at least 5 players. Please add player or remove team.');
         return [];
       }
 
