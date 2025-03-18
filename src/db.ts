@@ -1,15 +1,5 @@
+import { Player, Team } from '#commons/types';
 import Dexie, { type EntityTable } from 'dexie';
-
-export interface Player {
-  id?: string;
-  name: string;
-  skill: number;
-}
-
-export interface Team {
-  id?: string;
-  name: string;
-}
 
 // Define the database
 const db = new Dexie('RandomTeamGeneratorDB') as Dexie & {

@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db, Team } from '../db';
+import { db } from '../db';
+import { Team } from '#commons/types';
 
 export const useTeams = () => {
   // Fetch all teams from the database

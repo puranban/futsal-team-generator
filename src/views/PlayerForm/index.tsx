@@ -2,20 +2,23 @@ import { useCallback, useState } from 'react';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Button,
+  Card,
+  Col,
   Divider,
   Flex,
   Form,
   Input,
   Popconfirm,
   Rate,
+  Row,
   Space,
   Table,
   Typography,
 } from 'antd';
 
 import EditPlayerModal from '#components/EditPlayerModal';
-import { Player } from '../../db';
 import { usePlayers } from '#hooks/usePlayers';
+import { Player } from '#commons/types';
 
 const { Title } = Typography;
 
@@ -90,59 +93,69 @@ const PlayerForm: React.FC = () => {
   ];
 
   return (
-    <Flex vertical flex='1'>
-      <Form
-        form={form}
-        name='dynamic_form_nest_item'
-        onFinish={onFinish}
-        style={{ maxWidth: 600 }}
-        autoComplete='off'
-        initialValues={{ users: [{}] }}
-      >
-        <Form.List name='users'>
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name, ...restField }) => {
-                return (
-                  <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align='baseline'>
-                    <CloseOutlined onClick={() => remove(name)} />
+    <Flex vertical>
+      <Row>
+        <Col md={24} lg={16} xl={12}>
+          <Card>
+            <Form
+              form={form}
+              name='dynamic_form_nest_item'
+              onFinish={onFinish}
+              autoComplete='off'
+              initialValues={{ users: [{}] }}
+            >
+              <Form.List name='users'>
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }) => {
+                      return (
+                        <Space
+                          key={key}
+                          wrap
+                          align='baseline'
+                          style={{ display: 'flex', marginBottom: 8 }}
+                        >
+                          <CloseOutlined onClick={() => remove(name)} />
 
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'name']}
-                      rules={[{ required: true, message: 'player name required !' }]}
-                    >
-                      <Input placeholder={(`Player Name ${key + 1}`)} />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'skill']}
-                      rules={[{ required: true, message: 'score required !' }]}
-                    >
-                      <Rate character={({ index = 0 }) => index + 1} />
-                    </Form.Item>
-                  </Space>
-                )
-              })}
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'name']}
+                            rules={[{ required: true, message: 'player name required !' }]}
+                          >
+                            <Input  placeholder={(`Player Name ${key + 1}`)} />
+                          </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'skill']}
+                            rules={[{ required: true, message: 'score required !' }]}
+                          >
+                            <Rate character={({ index = 0 }) => index + 1} />
+                          </Form.Item>
+                        </Space>
+                      )
+                    })}
 
+                    <Form.Item>
+                      <Button
+                        type='dashed'
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                      >
+                        Add Player
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
               <Form.Item>
-                <Button
-                  type='dashed'
-                  onClick={() => add()}
-                  icon={<PlusOutlined />}
-                >
-                  Add Player
+                <Button type='primary' htmlType="submit">
+                  Submit
                 </Button>
               </Form.Item>
-            </>
-          )}
-        </Form.List>
-        <Form.Item>
-          <Button type='primary' htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
 
       <Divider />
       <Space direction='vertical' size="small">

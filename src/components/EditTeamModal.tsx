@@ -8,7 +8,7 @@ import {
   Modal,
   Space,
 } from 'antd';
-import { Team } from '../db';
+import { Team } from '#commons/types';
 
 interface Props {
   teamId: string;

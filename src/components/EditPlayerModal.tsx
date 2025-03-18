@@ -9,7 +9,7 @@ import {
   Rate,
   Space,
 } from 'antd';
-import { Player } from '../db';
+import { Player } from '#commons/types';
 
 interface Props {
   playerId: string;

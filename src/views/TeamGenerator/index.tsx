@@ -1,30 +1,39 @@
 import { useCallback, useState } from 'react';
 import {
   Button,
-  Col,
-  Flex,
   Input,
-  Row,
+  message,
+  Space,
   Typography,
 } from 'antd';
 
 import { usePlayers } from '#hooks/usePlayers';
 import { useTeams } from '#hooks/useTeams';
-import { Player } from '../../db';
+import { encodeTeamData } from '#hooks/useEncodeTeamData';
+import { TeamGeneratedType } from '#commons/types';
+import TeamPreview from '#components/TeamPreview';
+import { CopyOutlined } from '@ant-design/icons';
 
-interface TeamGeneratedType {
-  id?: string;
-  name: string;
-  players: Player[];
-  totalSkill: number;
-}
-
-const { Title } = Typography;
+const { Text } = Typography;
 
 const TeamGenerator: React.FC = () => {
   const { players } = usePlayers();
   const { teams } = useTeams();
+  const [messageApi, contextHolder] = message.useMessage();
   const [generatedTeams, setGeneratedTeams] = useState<TeamGeneratedType[]>([]);
+  const [shareUrl, setShareUrl] = useState<string | undefined>(undefined);
+
+  const generateShareableLink = useCallback(
+    (teams: TeamGeneratedType[]) => {
+      const encodedData = encodeTeamData(teams);
+      const baseUrl = window.location.origin;
+
+      // Get the current origin (e.g., http://localhost:3000)
+      const url = `${baseUrl}/share?data=${encodedData}`;
+      return url
+    },
+    [],
+  );
 
   const generateTeams = useCallback(
     (): TeamGeneratedType[] => {
@@ -57,50 +66,51 @@ const TeamGenerator: React.FC = () => {
         teamWithLowestSkill.totalSkill += player.skill;
       });
 
-      setGeneratedTeams(newGeneratedTeams);
+      try {
+        if (newGeneratedTeams.length > 0) {
+          const url = generateShareableLink(newGeneratedTeams);
+          setShareUrl(url);
+          setGeneratedTeams(newGeneratedTeams);
+        }
+      } catch(err) {
+        console.log('Error on shareable link generation', err);
+      }
       return newGeneratedTeams;
     },
-    [players, teams],
+    [players, teams, generateShareableLink],
+  );
+
+  const handleCopy = useCallback(
+    () => {
+      try {
+        if (shareUrl) {
+          void navigator.clipboard.writeText(shareUrl);
+          messageApi.success('Link copied  !');
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [shareUrl, messageApi],
   );
 
   return (
-    <div>
+    <Space direction='vertical' size='large'>
+      {contextHolder}
+      {shareUrl && (
+        <Space align='center'>
+          <Text> Share link: </Text>
+          <Input
+            addonAfter={<CopyOutlined onClick={handleCopy} />}
+            value={shareUrl}
+          />
+        </Space>
+      )}
       <Button type="primary" onClick={generateTeams}>
         Generate Teams
       </Button>
-
-      <Row gutter={24} justify='space-between'>
-        {generatedTeams.map(
-          (team) => (
-            <Col xs={24} md={12} lg={10}>
-              <Flex key={team.id} vertical gap={24}>
-                <Title level={4}>{team.name}</Title>
-
-                <Flex vertical size="middle" gap={6}>
-                  {team.players.map(
-                    (player, index) => (
-                      <Flex key={index} gap={6} align="center">
-                        <Input
-                          addonBefore={index + 1}
-                          value={player.name}
-                          readonly
-                          style={{ cursor: 'pointer', color: '#fefefe' }}
-                        />
-                        <div className='skill-box'>{ player.skill }</div>
-                      </Flex>
-                    )
-                  )}
-                </Flex>
-
-                <div className='total-skill'>
-                  <div className='skill-text'> { team.totalSkill } </div>
-                </div>
-              </Flex>
-            </Col>
-          )
-        )}
-      </Row>
-    </div>
+      <TeamPreview teams={generatedTeams} />
+    </Space>
   );
 };
 

@@ -15,7 +15,7 @@ root.render(
           Rate: {
             starColor: '#ee0000',
             starBg: 'rgba(18, 8, 8, 0.26)',
-            starHoverScale: 'scale(1.5)',
+            starHoverScale: 'scale(1.4)',
           }
         }
       }}

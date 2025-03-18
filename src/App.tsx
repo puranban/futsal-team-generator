@@ -11,6 +11,7 @@ import TeamGenerator from '#views/TeamGenerator';
 import Navbar from '#components/Navbar';
 
 import './App.css';
+import ShareTeam from '#views/ShareTeam';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<PlayerForm />} />
           <Route path="/teams" element={<TeamForm />} />
           <Route path="/generate-teams" element={<TeamGenerator />} />
+        <Route path="/share" element={<ShareTeam/>} />
         </Routes>
       </Router>
     </Layout>

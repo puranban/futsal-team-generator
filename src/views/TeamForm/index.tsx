@@ -9,11 +9,14 @@ import {
   Typography,
   Popconfirm,
   Flex,
+  Row,
+  Col,
+  Card,
 } from 'antd';
 
 import EditTeamModal from '#components/EditTeamModal';
 import { useTeams } from '#hooks/useTeams';
-import { Team } from '../../db';
+import { Team } from '#commons/types';
 
 const { Title } = Typography;
 interface Values {
@@ -82,53 +85,64 @@ const TeamForm: React.FC = () => {
 
   return (
     <Flex vertical flex='1'>
-      <Form
-        form={form}
-        onFinish={onFinish}
-        layout="vertical"
-        initialValues={{ teams: [{}] }}
-      >
-        <Form.List name='teams'>
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name, ...restField }) => {
-                return (
-                  <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align='baseline'>
-                    <CloseOutlined onClick={() => remove(name)} />
+      <Row>
+        <Col md={24} lg={16} xl={12}>
+          <Card>
+            <Form
+              form={form}
+              onFinish={onFinish}
+              layout="vertical"
+              initialValues={{ teams: [{}] }}
+            >
+              <Form.List name='teams'>
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }) => {
+                      return (
+                        <Space
+                          key={key}
+                          wrap
+                          align='baseline'
+                          style={{ display: 'flex', marginBottom: 8 }}
+                        >
+                          <CloseOutlined onClick={() => remove(name)} />
 
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'name']}
-                      rules={[{ required: true, message: 'team name required !' }]}
-                    >
-                      <Input placeholder={(`Team Name ${key + 1}`)} />
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'name']}
+                            rules={[{ required: true, message: 'team name required !' }]}
+                          >
+                            <Input placeholder={(`Team Name ${key + 1}`)} />
+                          </Form.Item>
+                        </Space>
+                      )
+                    })}
+
+                    <Form.Item>
+                      <Button
+                        type='dashed'
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                      >
+                        Add Team
+                      </Button>
                     </Form.Item>
-                  </Space>
-                )
-              })}
-
+                  </>
+                )}
+              </Form.List>
               <Form.Item>
-                <Button
-                  type='dashed'
-                  onClick={() => add()}
-                  icon={<PlusOutlined />}
-                >
-                  Add Team
+                <Button type='primary' htmlType="submit">
+                  Save
                 </Button>
               </Form.Item>
-            </>
-          )}
-        </Form.List>
-        <Form.Item>
-          <Button type='primary' htmlType="submit">
-            Save
-          </Button>
-        </Form.Item>
-      </Form>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
 
       <Space direction='vertical' size="small">
         <Title level={3}> Team List </Title>
-        </Space>
+      </Space>
       <Table dataSource={teams} columns={columns} rowKey="id" />
 
       {isModalOpen && (

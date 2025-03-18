@@ -47,9 +47,6 @@ importers:
       snippet:
         specifier: ^0.1.0
         version: 0.1.0
-      uuid:
-        specifier: ^11.1.0
-        version: 11.1.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.21.0
@@ -1603,10 +1600,6 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
-
-  uuid@11.1.0:
-    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
-    hasBin: true
 
   vite-tsconfig-paths@5.1.4:
     resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
@@ -3252,8 +3245,6 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  uuid@11.1.0: {}
 
   vite-tsconfig-paths@5.1.4(typescript@5.7.3)(vite@6.2.1(@types/node@22.13.9)(jiti@2.4.2)(yaml@2.7.0)):
     dependencies:

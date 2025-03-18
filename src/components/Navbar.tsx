@@ -28,6 +28,7 @@ const Navbar: React.FC = () => {
       <Flex gap={32}>
         {LinkItems.map((link) => (
           <Link
+            key={link.path}
             to={link.path}
             className={`${link.path === location.pathname ? 'is-active' : 'in-active'}`}
           >
