@@ -1,20 +1,20 @@
 import { useCallback, useMemo } from 'react';
-import { Button, Flex, Form, FormProps, Input, Modal, Rate, Space } from 'antd';
-import { Player } from '#contexts/PlayerContext';
+import { Button, Flex, Form, FormProps, Input, Modal, Space } from 'antd';
+import { Team } from '#contexts/TeamContext';
 
 interface Props {
-  playerId: string;
-  players: Player[];
-  onUpdatePlayer: (player: Player) => void;
+  teamId: string;
+  teams: Team[];
+  onUpdateTeam: (team: Team) => void;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const EditModal: React.FC<Props> = (props: Props) => {
+const EditTeamModal: React.FC<Props> = (props: Props) => {
   const {
-    players,
-    playerId,
-    onUpdatePlayer,
+    teamId,
+    teams,
+    onUpdateTeam,
     open,
     setOpen,
   } = props;
@@ -22,8 +22,8 @@ const EditModal: React.FC<Props> = (props: Props) => {
   const [form] = Form.useForm();
 
   const initialValue = useMemo(
-    () => players.find((p) => p.id === playerId),
-    [players, playerId],
+    () => teams.find((t) => t.id === teamId),
+    [teamId, teams],
   );
 
   const handleCancel = () => {
@@ -32,25 +32,25 @@ const EditModal: React.FC<Props> = (props: Props) => {
   };
 
   const onFinish = useCallback(
-    (val: Player)=> {
-    console.log('Success:', val);
-    const newPlayer = {
-      id: playerId,
-      name: val.name,
-      skill: val.skill,
-    }
-    onUpdatePlayer(newPlayer);
-  },
-  [onUpdatePlayer, playerId],
+    (val: Team)=> {
+      console.log('Success:', val);
+      const updatedTeam = {
+        id: teamId,
+        name: val.name,
+      }
+      onUpdateTeam(updatedTeam);
+      setOpen(false);
+    },
+    [onUpdateTeam, teamId, setOpen],
   );
 
-  const onFinishFailed: FormProps<Player>['onFinishFailed'] = (errorInfo) => {
+  const onFinishFailed: FormProps<Team>['onFinishFailed'] = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
 
   return (
     <Modal
-      title='Edit Player'
+      title='Edit Team'
       open={open}
       footer={null}
     >
@@ -65,22 +65,16 @@ const EditModal: React.FC<Props> = (props: Props) => {
         <Space size='large' style={{ display: 'flex', marginBottom: 8 }} align='baseline'>
           <Form.Item
             name='name'
-            rules={[{ required: true, message: 'player name required !' }]}
+            rules={[{ required: true, message: 'team name required !' }]}
           >
-            <Input placeholder='Player Name' />
-          </Form.Item>
-          <Form.Item
-            name='skill'
-            rules={[{ required: true, message: 'score required !' }]}
-          >
-            <Rate character={({ index = 0 }) => index + 1} />
+            <Input placeholder='Team Name' />
           </Form.Item>
         </Space>
 
         <Form.Item>
           <Flex gap={12}>
             <Button type='primary' htmlType="submit">
-              Submit
+              Update
             </Button>
             <Button type='default' onClick={handleCancel}>
               Cancel
@@ -92,4 +86,4 @@ const EditModal: React.FC<Props> = (props: Props) => {
   );
 };
 
-export default EditModal;
+export default EditTeamModal;
